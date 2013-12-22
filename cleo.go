@@ -55,6 +55,10 @@ type IndexContainer struct {
 var m *IndexContainer
 var chosenScoringFunction fn_score
 
+func NewIndexContainer(i *InvertedIndex, f *ForwardIndex) *IndexContainer {
+	return &IndexContainer{i,f}
+}
+
 func InitAndRun(corpusPath, port string, scoringFunction fn_score) {
 	m = &IndexContainer{}
 	m.iIndex = NewInvertedIndex()
