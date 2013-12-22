@@ -53,7 +53,7 @@ type IndexContainer struct {
 }
 
 var m *IndexContainer
-var chosenScoringFunction fn_score
+var ChosenScoringFunction fn_score
 
 func NewIndexContainer(i *InvertedIndex, f *ForwardIndex) *IndexContainer {
 	return &IndexContainer{i,f}
@@ -64,9 +64,9 @@ func InitAndRun(corpusPath, port string, scoringFunction fn_score) {
 	m.iIndex = NewInvertedIndex()
 	m.fIndex = NewForwardIndex()
 
-	chosenScoringFunction = scoringFunction
+	ChosenScoringFunction = scoringFunction
 	if scoringFunction == nil {
-		chosenScoringFunction = Score
+		ChosenScoringFunction = Score
 	}
 
 	InitIndex(m.iIndex, m.fIndex, corpusPath)
@@ -137,7 +137,7 @@ func CleoSearch(iIndex *InvertedIndex, fIndex *ForwardIndex, query string) []Ran
 	for _, i := range candidates {
 		if TestBytesFromQuery(i.bloom, qBloom) == true { //Filter using Bloom Filter
 			c := fIndex.itemAt(i.docId)              //Get whole document from Forward Index
-			score := chosenScoringFunction(query, c) //Score the Forward Index between 0-1
+			score := ChosenScoringFunction(query, c) //Score the Forward Index between 0-1
 			ranked := RankedResult{c, score}
 			rslt = append(rslt, ranked)
 		}
