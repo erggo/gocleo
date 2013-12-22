@@ -47,16 +47,16 @@ func Max(a ...int) int {
 	return max
 }
 
-type indexContainer struct {
+type IndexContainer struct {
 	iIndex *InvertedIndex
 	fIndex *ForwardIndex
 }
 
-var m *indexContainer
+var m *IndexContainer
 var chosenScoringFunction fn_score
 
 func InitAndRun(corpusPath, port string, scoringFunction fn_score) {
-	m = &indexContainer{}
+	m = &IndexContainer{}
 	m.iIndex = NewInvertedIndex()
 	m.fIndex = NewForwardIndex()
 
@@ -97,7 +97,7 @@ func InitIndex(iIndex *InvertedIndex, fIndex *ForwardIndex, corpusPath string) {
 		if err != nil {
 			break
 		}
-		filter := computeBloomFilter(line)
+		filter := ComputeBloomFilter(line)
 
 		iIndex.AddDoc(docID, line, filter) //insert into inverted index
 		fIndex.AddDoc(docID, line)         //Insert into forward index
@@ -128,7 +128,7 @@ func CleoSearch(iIndex *InvertedIndex, fIndex *ForwardIndex, query string) []Ran
 	fmt.Println("Query:", query)
 
 	candidates := iIndex.Search(query) //First get candidates from Inverted Index
-	qBloom := computeBloomFilter(query)
+	qBloom := ComputeBloomFilter(query)
 
 	for _, i := range candidates {
 		if TestBytesFromQuery(i.bloom, qBloom) == true { //Filter using Bloom Filter
@@ -222,7 +222,7 @@ type fn_score func(word, query string) (score float64)
 
 //The bloom filter of a word is 8 bytes in length
 //and has each character added separately
-func computeBloomFilter(s string) int {
+func ComputeBloomFilter(s string) int {
 	cnt := len(s)
 
 	if cnt <= 0 {
